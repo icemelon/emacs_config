@@ -45,13 +45,22 @@
             (setq tab-width 4)))
 
 ;; auto complete
-(require 'auto-complete)
-(define-globalized-minor-mode real-global-auto-complete-mode
-  auto-complete-mode (lambda ()
-                       (if (not (minibufferp (current-buffer)))
-                         (auto-complete-mode 1))
-                       ))
-(real-global-auto-complete-mode t)
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(ac-config-default)
+(global-auto-complete-mode t)
+
+;(define-globalized-minor-mode real-global-auto-complete-mode
+;  auto-complete-mode (lambda ()
+;                       (if (not (minibufferp (current-buffer)))
+;                         (auto-complete-mode 1))
+;                       ))
+;(real-global-auto-complete-mode t)
+;(auto-completion better-defaults emacs-lisp git
+;                 (shell :variables shell-default-height 30 shell-default-position 'bottom)
+;                 syntax-checking version-control d go rust elixir swift yaml latex markdown osx spacemacs-layouts)
+(setq company-tooltip-align-annotations t)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
