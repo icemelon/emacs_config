@@ -11,7 +11,7 @@
 (require 'linum)
 (global-linum-mode 1)
 (setq-default column-number-mode 1)
-(setq linum-format "%d")
+(setq linum-format "%d ")
 
 ;; use Shift+arrow_keys to move cursor around split panes
 (windmove-default-keybindings)
@@ -62,15 +62,15 @@
 (setq company-tooltip-align-annotations t)
 
 
-(custom-set-variables
+;(custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(column-number-mode 1))
-(custom-set-faces
+; '(column-number-mode 1))
+;(custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
+; '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
