@@ -33,6 +33,13 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
+(require 'cc-mode)
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
+(add-hook 'c-mode-common-hook 'google-make-newline-indent)
+(add-hook 'c++-mode-common-hook 'google-set-c-style)
+(add-hook 'c++-mode-common-hook 'google-make-newline-indent)
+
 (add-hook 'python-mode-hook
           (lambda()
             (setq indent-tabs-mode nil)
