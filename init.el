@@ -6,15 +6,10 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/")
              t)
+;; activate all the packages (in particular autoloads)
 (package-initialize) ;; You might already have this line
 
-(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode))
-;; activate all the packages (in particular autoloads)
-(package-initialize)
-;; fetch the list of packages available 
-(unless package-archive-contents
-  (package-refresh-contents))
-;; install the missing packages
+(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode window-number))
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
@@ -31,6 +26,11 @@
 ;; enable ido
 (require 'ido)
 (ido-mode t)
+
+;; enable window-number
+(require 'window-number)
+(window-number-mode 1)
+(window-number-meta-mode t)
 
 ;; use Shift+arrow_keys to move cursor around split panes
 (windmove-default-keybindings)
@@ -56,6 +56,7 @@
 (require 'cc-mode)
 (require 'google-c-style)
 (require 'protobuf-mode)
+(require 'yaml-mode)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
 (add-hook 'c-mode-common-hook 'google-make-newline-indent)
 (add-hook 'c++-mode-common-hook 'google-set-c-style)
@@ -75,6 +76,10 @@
 (add-hook 'racket-mode-hook
           (lambda ()
             (define-key racket-mode-map (kbd "C-c r") 'racket-run)))
+
+(add-hook 'yaml-mode-hook
+        (lambda ()
+            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 (add-to-list 'auto-mode-alist '("\\.h$" . c++-mode))
 (add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
@@ -111,7 +116,8 @@
 ;;  ;; If you edit it by hand, you could mess it up, so be careful.
 ;;  ;; Your init file should contain only one such instance.
 ;;  ;; If there is more than one, they won't work right.
-  '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
+  '(default ((t (:inherit nil :stipple nil :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
+;;  '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
