@@ -8,6 +8,8 @@
              t)
 ;; activate all the packages (in particular autoloads)
 (package-initialize) ;; You might already have this line
+(when (not package-archive-contents)
+    (package-refresh-contents))
 
 (setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode window-number))
 (dolist (package package-list)
