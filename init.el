@@ -11,7 +11,7 @@
 (when (not package-archive-contents)
     (package-refresh-contents))
 
-(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode window-number))
+(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode window-number neotree))
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
@@ -24,6 +24,9 @@
 
 ;; set meta key to window
 (setq x-super-keysym 'meta)
+;; redefine home and end key
+(global-set-key (kbd "<home>") 'beginning-of-line)
+(global-set-key (kbd "<end>") 'end-of-line)
 
 ;; enable ido
 (require 'ido)
@@ -33,6 +36,10 @@
 (require 'window-number)
 (window-number-mode 1)
 (window-number-meta-mode t)
+
+;; enable neotree
+(require 'neotree)
+(global-set-key [f8] 'neotree-toggle)
 
 ;; use Shift+arrow_keys to move cursor around split panes
 (windmove-default-keybindings)
@@ -114,11 +121,11 @@
 ;;  ;; If there is more than one, they won't work right.
 ;;  '(column-number-mode 1))
 (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-  '(default ((t (:inherit nil :stipple nil :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "nil" :family "Roboto Mono")))))
 ;;  '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -128,12 +135,7 @@
  '(package-selected-packages
    (quote
     (racket-mode dr-racket-like-unicode cuda-mode auto-complete))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
 
 (defun sort-buffers ()
   "Put the buffer list in alphabetical order."
