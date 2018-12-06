@@ -130,7 +130,7 @@
 
 ;; Autocomplete
 (use-package company
-  :defer 10
+  ;; :defer 10
   :diminish company-mode
   :bind (:map company-active-map
               ("M-j" . company-select-next)
@@ -147,16 +147,16 @@
       (append (if (consp backend) backend (list backend))
               '(:with company-yasnippet))))
 
-  :init (global-company-mode t)
-  :config
-  ;; no delay no autocomplete
-  (validate-setq
-   company-idle-delay 0
-   company-minimum-prefix-length 2
-   company-tooltip-limit 20)
+  :init (global-company-mode t))
+  ;; :config
+  ;; ;; no delay no autocomplete
+  ;; (validate-setq
+  ;;  company-idle-delay 0
+  ;;  company-minimum-prefix-length 2
+  ;;  company-tooltip-limit 20)
 
-  (validate-setq company-backends 
-                 (mapcar #'company-mode/backend-with-yas company-backends)))
+  ;; (validate-setq company-backends 
+  ;;                (mapcar #'company-mode/backend-with-yas company-backends)))
 
 
 ;; ;; Code-comprehension server
@@ -174,9 +174,17 @@
 ;;     :init (company-ycmd-setup)
 ;;     :config (add-to-list 'company-backends (company-mode/backend-with-yas 'company-ycmd))))
 
+(cond
+ ((file-executable-p "/usr/local/bin/python3")
+  (set-variable 'system-python "/usr/local/bin/python3"))
+ ((file-executable-p "/usr/bin/python3")
+  (set-variable 'system-python "/usr/bin/python3"))
+ (t (set-variable 'system-python nil)))
+(cl-assert system-python t "Cannot find system python3")
+
 (require 'ycmd)
 (add-hook 'after-init-hook #'global-ycmd-mode)
-(set-variable 'ycmd-server-command `("/usr/local/bin/python3" ,(file-truename "~/.emacs.d/ycmd/ycmd")))
+(set-variable 'ycmd-server-command `(,system-python ,(file-truename "~/.emacs.d/ycmd/ycmd")))
 (set-variable 'ycmd-global-config (file-truename "~/.emacs.d/.ycm_extra_conf.py"))
 
 (require 'company-ycmd)
