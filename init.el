@@ -11,10 +11,15 @@
 (when (not package-archive-contents)
     (package-refresh-contents))
 
-(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode window-number neotree))
+(setq package-list '(protobuf-mode auto-complete ido go-mode cuda-mode yaml-mode
+                                   window-number neotree use-package flycheck flycheck-ycmd
+                                   ycm company-ycm company-ycmd yasnippet eldoc))
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
+
+;; enable use-package
+(require 'use-package)
 
 ;; enable line number
 (require 'linum)
@@ -96,24 +101,109 @@
 (add-to-list 'auto-mode-alist '("\\.rkt$" . racket-mode))
 (add-to-list 'auto-mode-alist '("\\.proto$" . protobuf-mode))
 
-;; auto complete
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-(ac-config-default)
-(global-auto-complete-mode t)
 
-;(define-globalized-minor-mode real-global-auto-complete-mode
-;  auto-complete-mode (lambda ()
-;                       (if (not (minibufferp (current-buffer)))
-;                         (auto-complete-mode 1))
-;                       ))
-;(real-global-auto-complete-mode t)
-;(auto-completion better-defaults emacs-lisp git
-;                 (shell :variables shell-default-height 30 shell-default-position 'bottom)
-;                 syntax-checking version-control d go rust elixir swift yaml latex markdown osx spacemacs-layouts)
-(setq company-tooltip-align-annotations t)
+;;;;;;;;;;;;;;;;;;;;;;; auto complete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (require 'auto-complete-config)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+;; (ac-config-default)
+;; (global-auto-complete-mode t)
+
+;; ;; (define-globalized-minor-mode real-global-auto-complete-mode
+;; ;;  auto-complete-mode (lambda ()
+;; ;;                       (if (not (minibufferp (current-buffer)))
+;; ;;                         (auto-complete-mode 1))
+;; ;;                       ))
+;; ;; (real-global-auto-complete-mode t)
+;; ;; (auto-completion better-defaults emacs-lisp git
+;; ;;                 (shell :variables shell-default-height 30 shell-default-position 'bottom)
+;; ;;                 syntax-checking version-control d go rust elixir swift yaml latex markdown osx spacemacs-layouts)
+;; (setq company-tooltip-align-annotations t)
 
 
+;;;;;;;;;;;;;;;;;;;;;;; ycm ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Snippets
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :init (yas-global-mode t))
+
+;; Autocomplete
+(use-package company
+  :defer 10
+  :diminish company-mode
+  :bind (:map company-active-map
+              ("M-j" . company-select-next)
+              ("M-k" . company-select-previous))
+  :preface
+  ;; enable yasnippet everywhere
+  (defvar company-mode/enable-yas t
+    "Enable yasnippet for all backends.")
+  (defun company-mode/backend-with-yas (backend)
+    (if (or 
+         (not company-mode/enable-yas) 
+         (and (listp backend) (member 'company-yasnippet backend)))
+        backend
+      (append (if (consp backend) backend (list backend))
+              '(:with company-yasnippet))))
+
+  :init (global-company-mode t)
+  :config
+  ;; no delay no autocomplete
+  (validate-setq
+   company-idle-delay 0
+   company-minimum-prefix-length 2
+   company-tooltip-limit 20)
+
+  (validate-setq company-backends 
+                 (mapcar #'company-mode/backend-with-yas company-backends)))
+
+
+;; ;; Code-comprehension server
+;; (use-package ycmd
+;;   :ensure t
+;;   ;; :init (add-hook 'c++-mode-hook #'ycmd-mode)
+;;   :init (add-hook 'after-init-hook #'global-ycmd-mode)
+;;   :config
+;;   (set-variable 'ycmd-server-command '("/use/local/bin/python3" (expand-file-name "~/.emacs.d/ycmd/ycmd")))
+;;   (set-variable 'ycmd-global-config (expand-file-name "~/.emacs.d/ycm_conf.py"))
+;;   (set-variable 'ycmd-extra-conf-whitelist '("~/repo/*"))
+
+;;   (use-package company-ycmd
+;;     :ensure t
+;;     :init (company-ycmd-setup)
+;;     :config (add-to-list 'company-backends (company-mode/backend-with-yas 'company-ycmd))))
+
+(require 'ycmd)
+(add-hook 'after-init-hook #'global-ycmd-mode)
+(set-variable 'ycmd-server-command `("/usr/local/bin/python3" ,(file-truename "~/.emacs.d/ycmd/ycmd")))
+(set-variable 'ycmd-global-config (file-truename "~/.emacs.d/.ycm_extra_conf.py"))
+
+(require 'company-ycmd)
+(company-ycmd-setup)
+(add-to-list 'company-backends (company-mode/backend-with-yas 'company-ycmd))
+;; (add-hook 'after-init-hook 'global-company-mode)
+
+;; On-the-fly syntax checking
+(use-package flycheck
+  :ensure t
+  :diminish flycheck-mode
+  :init (global-flycheck-mode t))
+
+(use-package flycheck-ycmd
+  :commands (flycheck-ycmd-setup)
+  :init (add-hook 'ycmd-mode-hook 'flycheck-ycmd-setup))
+
+;; Show argument list in echo area
+(use-package eldoc
+  :diminish eldoc-mode
+  :init (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup))
+
+;; (require 'eldoc)
+;; (autoload 'eldoc-in-minibuffer-mode "eldoc-eval")
+;; (eldoc-in-minibuffer-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;; customize font ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
 ;;  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -127,6 +217,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 150 :width normal :foundry "nil" :family "Roboto Mono")))))
 ;;  '(default ((t (:inherit nil :stipple nil :background "#263238" :foreground "#ffffff" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
